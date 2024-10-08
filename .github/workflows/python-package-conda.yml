@@ -1,34 +1,25 @@
-name: Python Package using Conda
-
-on: [push]
-
+name: test
+on:
+  workflow_dispatch:
+  schedule: 
+    # 代表国际标准时间4点0分，北京时间需要+8小时，代表北京时间中午12点运行
+    - cron: '0 0 * * *'
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 5
-
+#将工作流程中运行的所有作业组合在一起
+  build:
+  #定义名为 build 的作业。 子键将定义作业的属性 
+    runs-on: ubuntu-latest 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.10'
-    - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
-    - name: Install dependencies
-      run: |
-        conda env update --file environment.yml --name base
-    - name: Lint with flake8
-      run: |
-        conda install flake8
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Test with pytest
-      run: |
-        conda install pytest
-        pytest
+      - uses: actions/checkout@v2
+    
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      - name: install pip packages
+        run: |
+          python -m pip install --upgrade pip
+          pip3 install requests
+      - name: test
+        run: |
+          python3 自动签到.py
